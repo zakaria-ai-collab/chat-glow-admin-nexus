@@ -11,14 +11,14 @@ const users = [
 ];
 
 const tagColors = {
-  client: 'bg-green-50 text-green-700 border-green-200',
-  prospect: 'bg-green-100 text-green-800 border-green-300',
-  test: 'bg-green-200 text-green-900 border-green-400',
+  client: 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-300',
+  prospect: 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 border-blue-300',
+  test: 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300',
 };
 
 const statusColors = {
-  active: 'bg-green-100 text-green-800',
-  inactive: 'bg-white text-gray-600 border border-gray-200',
+  active: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
+  inactive: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
 };
 
 export const UsersSection = () => {
@@ -35,33 +35,33 @@ export const UsersSection = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-bold text-green-800">
+        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
           Users & Clients
         </h2>
-        <Button className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-          <Download className="w-4 h-4 mr-2" />
+        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 px-8 py-3 rounded-2xl">
+          <Download className="w-5 h-5 mr-3" />
           Export to Excel
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-8 rounded-3xl shadow-lg border border-green-100">
+      <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-purple-200/50">
         <div className="flex flex-col md:flex-row gap-6 md:items-center">
           <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-green-500" />
+            <Search className="w-6 h-6 absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-500" />
             <input
               type="text"
               placeholder="Search by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-4 w-full bg-green-50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+              className="pl-14 pr-4 py-4 w-full bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-300/50 focus:border-purple-400 transition-all shadow-lg"
             />
           </div>
           
           <div className="flex items-center space-x-4">
-            <Filter className="w-5 h-5 text-green-600" />
+            <Filter className="w-6 h-6 text-purple-600" />
             <Select value={filterTag} onValueChange={setFilterTag}>
-              <SelectTrigger className="w-48 bg-green-50 border-green-200 rounded-2xl">
+              <SelectTrigger className="w-48 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl shadow-lg">
                 <SelectValue placeholder="Filter by tag" />
               </SelectTrigger>
               <SelectContent>
@@ -76,44 +76,44 @@ export const UsersSection = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-3xl shadow-lg border border-green-100 overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-blue-200/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-green-50 border-b border-green-100">
+            <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
               <tr>
-                <th className="text-left p-6 font-semibold text-green-800">WhatsApp Number</th>
-                <th className="text-left p-6 font-semibold text-green-800">Name</th>
-                <th className="text-left p-6 font-semibold text-green-800">Status</th>
-                <th className="text-left p-6 font-semibold text-green-800">First Contact</th>
-                <th className="text-left p-6 font-semibold text-green-800">Tag</th>
-                <th className="text-left p-6 font-semibold text-green-800">Actions</th>
+                <th className="text-left p-6 font-bold">WhatsApp Number</th>
+                <th className="text-left p-6 font-bold">Name</th>
+                <th className="text-left p-6 font-bold">Status</th>
+                <th className="text-left p-6 font-bold">First Contact</th>
+                <th className="text-left p-6 font-bold">Tag</th>
+                <th className="text-left p-6 font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user, index) => (
-                <tr key={user.id} className="border-b border-green-50 hover:bg-green-25 transition-colors">
+                <tr key={user.id} className="border-b border-purple-100 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300">
                   <td className="p-6">
-                    <span className="font-mono text-green-700 bg-green-50 px-3 py-1 rounded-lg">{user.phone}</span>
+                    <span className="font-mono text-purple-700 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl shadow-md">{user.phone}</span>
                   </td>
                   <td className="p-6">
-                    <span className="font-medium text-green-900">{user.name}</span>
+                    <span className="font-bold text-gray-800 text-lg">{user.name}</span>
                   </td>
                   <td className="p-6">
-                    <span className={`px-4 py-2 rounded-full text-sm font-medium ${statusColors[user.status]}`}>
+                    <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-lg ${statusColors[user.status]}`}>
                       {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                     </span>
                   </td>
                   <td className="p-6">
-                    <span className="text-green-700">{new Date(user.firstContact).toLocaleDateString()}</span>
+                    <span className="text-gray-700 font-semibold">{new Date(user.firstContact).toLocaleDateString()}</span>
                   </td>
                   <td className="p-6">
-                    <span className={`px-4 py-2 rounded-full text-sm font-medium border ${tagColors[user.tag]}`}>
+                    <span className={`px-4 py-2 rounded-full text-sm font-bold border-2 shadow-lg ${tagColors[user.tag]}`}>
                       {user.tag.charAt(0).toUpperCase() + user.tag.slice(1)}
                     </span>
                   </td>
                   <td className="p-6">
                     <Select defaultValue={user.tag}>
-                      <SelectTrigger className="w-36 h-10 text-sm bg-green-50 border-green-200 rounded-xl">
+                      <SelectTrigger className="w-36 h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl shadow-md">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -132,28 +132,28 @@ export const UsersSection = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-100 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-700">{users.filter(u => u.tag === 'client').length}</span>
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">{users.filter(u => u.tag === 'client').length}</span>
             </div>
-            <p className="text-green-800 font-semibold">Clients</p>
+            <p className="text-white font-bold text-xl">Clients</p>
           </div>
         </div>
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-8 rounded-3xl shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-800">{users.filter(u => u.tag === 'prospect').length}</span>
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">{users.filter(u => u.tag === 'prospect').length}</span>
             </div>
-            <p className="text-green-900 font-semibold">Prospects</p>
+            <p className="text-white font-bold text-xl">Prospects</p>
           </div>
         </div>
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-300 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-8 rounded-3xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-300 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-900">{users.filter(u => u.status === 'active').length}</span>
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">{users.filter(u => u.status === 'active').length}</span>
             </div>
-            <p className="text-green-900 font-semibold">Active Users</p>
+            <p className="text-white font-bold text-xl">Active Users</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Download, Filter, Bot, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,16 +22,16 @@ export const ConversationsSection = () => {
   const [userFilter, setUserFilter] = useState('all');
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-800 bg-green-100';
-    if (confidence >= 0.6) return 'text-green-700 bg-green-50';
-    return 'text-green-900 bg-green-200';
+    if (confidence >= 0.8) return 'text-white bg-gradient-to-r from-green-500 to-emerald-600';
+    if (confidence >= 0.6) return 'text-white bg-gradient-to-r from-yellow-500 to-orange-600';
+    return 'text-white bg-gradient-to-r from-red-500 to-pink-600';
   };
 
   const getTypeIcon = (type: string) => {
     return type === 'auto' ? (
-      <Bot className="w-5 h-5 text-green-600" />
+      <Bot className="w-5 h-5 text-purple-600" />
     ) : (
-      <User className="w-5 h-5 text-green-500" />
+      <User className="w-5 h-5 text-blue-600" />
     );
   };
 
@@ -46,15 +45,15 @@ export const ConversationsSection = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-bold text-green-800">
+        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
           Conversations
         </h2>
         <div className="flex space-x-4">
-          <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50 rounded-2xl">
+          <Button variant="outline" className="border-2 border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-2xl shadow-lg px-6 py-3">
             <Download className="w-4 h-4 mr-2" />
             Export CSV
           </Button>
-          <Button variant="outline" className="border-green-300 text-green-800 hover:bg-green-100 rounded-2xl">
+          <Button variant="outline" className="border-2 border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 rounded-2xl shadow-lg px-6 py-3">
             <Download className="w-4 h-4 mr-2" />
             Export JSON
           </Button>
@@ -62,23 +61,23 @@ export const ConversationsSection = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white p-8 rounded-3xl shadow-lg border border-green-100">
+      <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-blue-200/50">
         <div className="flex flex-col lg:flex-row gap-6 lg:items-center">
           <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-green-500" />
+            <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500" />
             <input
               type="text"
               placeholder="Search conversations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-4 w-full bg-green-50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+              className="pl-12 pr-4 py-4 w-full bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300/50 focus:border-blue-400 transition-all shadow-lg"
             />
           </div>
           
           <div className="flex items-center space-x-4">
-            <Filter className="w-5 h-5 text-green-600" />
+            <Filter className="w-5 h-5 text-blue-600" />
             <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-48 bg-green-50 border-green-200 rounded-2xl">
+              <SelectTrigger className="w-48 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl shadow-lg">
                 <SelectValue placeholder="Filter by date" />
               </SelectTrigger>
               <SelectContent>
@@ -90,7 +89,7 @@ export const ConversationsSection = () => {
             </Select>
             
             <Select value={userFilter} onValueChange={setUserFilter}>
-              <SelectTrigger className="w-48 bg-green-50 border-green-200 rounded-2xl">
+              <SelectTrigger className="w-48 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl shadow-lg">
                 <SelectValue placeholder="Filter by user" />
               </SelectTrigger>
               <SelectContent>
@@ -107,44 +106,44 @@ export const ConversationsSection = () => {
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.id}
-            className="bg-white p-8 rounded-3xl shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300"
+            className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-purple-200/50 hover:shadow-purple-500/10 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-800 font-bold text-xl">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
                   {conversation.user.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-green-900 text-lg">{conversation.user}</h3>
-                  <p className="text-sm text-green-600 font-mono bg-green-50 px-3 py-1 rounded-lg inline-block">{conversation.phone}</p>
+                  <h3 className="font-bold text-gray-800 text-xl">{conversation.user}</h3>
+                  <p className="text-sm text-purple-600 font-mono bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl inline-block shadow-md">{conversation.phone}</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-xl">
+                <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl shadow-lg">
                   {getTypeIcon(conversation.type)}
-                  <span className="text-sm text-green-700 font-medium">
+                  <span className="text-sm text-purple-700 font-bold">
                     {conversation.type === 'auto' ? 'Auto Response' : 'Fallback'}
                   </span>
                 </div>
                 
-                <div className={`px-4 py-2 rounded-xl text-sm font-medium ${getConfidenceColor(conversation.confidence)}`}>
+                <div className={`px-4 py-2 rounded-xl text-sm font-bold shadow-lg ${getConfidenceColor(conversation.confidence)}`}>
                   {Math.round(conversation.confidence * 100)}% confidence
                 </div>
                 
-                <span className="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-xl">{conversation.timestamp}</span>
+                <span className="text-sm text-blue-700 bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-3 rounded-xl shadow-lg font-semibold">{conversation.timestamp}</span>
               </div>
             </div>
             
             <div className="space-y-4">
-              <div className="bg-green-50 p-6 rounded-2xl border-l-4 border-green-400">
-                <p className="text-sm font-semibold text-green-800 mb-2">Question:</p>
-                <p className="text-green-900">{conversation.question}</p>
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500 shadow-lg">
+                <p className="text-sm font-bold text-blue-800 mb-2">Question:</p>
+                <p className="text-gray-800 font-medium">{conversation.question}</p>
               </div>
               
-              <div className="bg-green-100 p-6 rounded-2xl border-l-4 border-green-500">
-                <p className="text-sm font-semibold text-green-900 mb-2">Answer:</p>
-                <p className="text-green-900">{conversation.answer}</p>
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500 shadow-lg">
+                <p className="text-sm font-bold text-purple-800 mb-2">Answer:</p>
+                <p className="text-gray-800 font-medium">{conversation.answer}</p>
               </div>
             </div>
           </div>
@@ -153,30 +152,30 @@ export const ConversationsSection = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-100 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-8 rounded-3xl shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-700">{conversations.filter(c => c.type === 'auto').length}</span>
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">{conversations.filter(c => c.type === 'auto').length}</span>
             </div>
-            <p className="text-green-800 font-semibold">Auto Responses</p>
+            <p className="text-white font-bold text-xl">Auto Responses</p>
           </div>
         </div>
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-8 rounded-3xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-800">{conversations.filter(c => c.type === 'fallback').length}</span>
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">{conversations.filter(c => c.type === 'fallback').length}</span>
             </div>
-            <p className="text-green-900 font-semibold">Fallbacks</p>
+            <p className="text-white font-bold text-xl">Fallbacks</p>
           </div>
         </div>
-        <div className="bg-white p-8 rounded-3xl border-2 border-green-300 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 transform">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-300 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-green-900">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-white">
                 {Math.round((conversations.reduce((acc, c) => acc + c.confidence, 0) / conversations.length) * 100)}%
               </span>
             </div>
-            <p className="text-green-900 font-semibold">Avg Confidence</p>
+            <p className="text-white font-bold text-xl">Avg Confidence</p>
           </div>
         </div>
       </div>
