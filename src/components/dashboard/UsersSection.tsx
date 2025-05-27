@@ -5,17 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const users = [
-  { id: 1, phone: '+1 (555) 123-4567', name: 'John Smith', status: 'active', firstContact: '2024-01-15', tag: 'client' },
-  { id: 2, phone: '+1 (555) 234-5678', name: 'Sarah Johnson', status: 'inactive', firstContact: '2024-01-10', tag: 'prospect' },
-  { id: 3, phone: '+1 (555) 345-6789', name: 'Mike Davis', status: 'active', firstContact: '2024-01-20', tag: 'client' },
-  { id: 4, phone: '+1 (555) 456-7890', name: 'Emma Wilson', status: 'active', firstContact: '2024-01-08', tag: 'test' },
-  { id: 5, phone: '+1 (555) 567-8901', name: 'David Brown', status: 'inactive', firstContact: '2024-01-05', tag: 'prospect' },
+  { id: 1, phone: '0612345678', name: 'Ahmed Bennani', status: 'active', firstContact: '2024-01-15', tag: 'client' },
+  { id: 2, phone: '0687654321', name: 'Fatima El Alami', status: 'inactive', firstContact: '2024-01-10', tag: 'prospect' },
+  { id: 3, phone: '0645123789', name: 'Youssef Mokhtar', status: 'active', firstContact: '2024-01-20', tag: 'client' },
 ];
 
 const tagColors = {
   client: 'bg-green-100 text-green-700 border-green-200',
-  prospect: 'bg-blue-100 text-blue-700 border-blue-200',
-  test: 'bg-purple-100 text-purple-700 border-purple-200',
+  prospect: 'bg-green-50 text-green-600 border-green-150',
+  test: 'bg-green-200 text-green-800 border-green-300',
 };
 
 const statusColors = {
@@ -37,7 +35,7 @@ export const UsersSection = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
           Users & Clients
         </h2>
         <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg">
@@ -56,7 +54,7 @@ export const UsersSection = () => {
               placeholder="Search by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-3 w-full bg-white/70 border border-gray-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 transition-all"
+              className="pl-10 pr-4 py-3 w-full bg-white/70 border border-gray-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-300 transition-all"
             />
           </div>
           
@@ -81,7 +79,7 @@ export const UsersSection = () => {
       <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-purple-50/50 to-blue-50/50 border-b border-purple-100/50">
+            <thead className="bg-gradient-to-r from-green-50/50 to-green-100/50 border-b border-green-100/50">
               <tr>
                 <th className="text-left p-4 font-semibold text-gray-700">WhatsApp Number</th>
                 <th className="text-left p-4 font-semibold text-gray-700">Name</th>
@@ -93,7 +91,7 @@ export const UsersSection = () => {
             </thead>
             <tbody>
               {filteredUsers.map((user, index) => (
-                <tr key={user.id} className="border-b border-gray-100/50 hover:bg-purple-50/30 transition-colors">
+                <tr key={user.id} className="border-b border-gray-100/50 hover:bg-green-50/30 transition-colors">
                   <td className="p-4">
                     <span className="font-mono text-gray-600">{user.phone}</span>
                   </td>
@@ -140,16 +138,16 @@ export const UsersSection = () => {
             <p className="text-green-600 text-sm">Clients</p>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 rounded-xl border border-blue-200/50">
+        <div className="bg-gradient-to-br from-green-100 to-green-200/50 p-4 rounded-xl border border-green-300/50">
           <div className="text-center">
-            <p className="text-2xl font-bold text-blue-700">{users.filter(u => u.tag === 'prospect').length}</p>
-            <p className="text-blue-600 text-sm">Prospects</p>
+            <p className="text-2xl font-bold text-green-800">{users.filter(u => u.tag === 'prospect').length}</p>
+            <p className="text-green-700 text-sm">Prospects</p>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-4 rounded-xl border border-purple-200/50">
+        <div className="bg-gradient-to-br from-green-200 to-green-300/50 p-4 rounded-xl border border-green-400/50">
           <div className="text-center">
-            <p className="text-2xl font-bold text-purple-700">{users.filter(u => u.status === 'active').length}</p>
-            <p className="text-purple-600 text-sm">Active Users</p>
+            <p className="text-2xl font-bold text-green-900">{users.filter(u => u.status === 'active').length}</p>
+            <p className="text-green-800 text-sm">Active Users</p>
           </div>
         </div>
       </div>
