@@ -9,27 +9,32 @@ interface FloatingActionButtonProps {
 export const FloatingActionButton = ({ activeSection }: FloatingActionButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Don't show the FAB on overview section
+  if (activeSection === 'overview') {
+    return null;
+  }
+
   const getQuickActions = () => {
     switch (activeSection) {
       case 'users':
         return [
           { icon: UserPlus, label: 'Add User', color: 'from-green-400 to-green-500' },
-          { icon: Upload, label: 'Import CSV', color: 'from-blue-400 to-blue-500' },
+          { icon: Upload, label: 'Import CSV', color: 'from-green-500 to-green-600' },
         ];
       case 'conversations':
         return [
-          { icon: MessageSquare, label: 'New Conversation', color: 'from-purple-400 to-purple-500' },
-          { icon: Upload, label: 'Import Data', color: 'from-blue-400 to-blue-500' },
+          { icon: MessageSquare, label: 'New Conversation', color: 'from-green-400 to-green-500' },
+          { icon: Upload, label: 'Import Data', color: 'from-green-500 to-green-600' },
         ];
       case 'documents':
         return [
-          { icon: Upload, label: 'Upload Document', color: 'from-purple-400 to-purple-500' },
-          { icon: Plus, label: 'New Folder', color: 'from-green-400 to-green-500' },
+          { icon: Upload, label: 'Upload Document', color: 'from-green-400 to-green-500' },
+          { icon: Plus, label: 'New Folder', color: 'from-green-500 to-green-600' },
         ];
       default:
         return [
           { icon: UserPlus, label: 'Add User', color: 'from-green-400 to-green-500' },
-          { icon: Upload, label: 'Upload Document', color: 'from-purple-400 to-purple-500' },
+          { icon: Upload, label: 'Upload Document', color: 'from-green-500 to-green-600' },
         ];
     }
   };
@@ -64,7 +69,7 @@ export const FloatingActionButton = ({ activeSection }: FloatingActionButtonProp
       {/* Main FAB */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
+        className={`w-14 h-14 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
           isOpen ? 'rotate-45' : ''
         }`}
       >
