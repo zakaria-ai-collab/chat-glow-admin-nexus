@@ -1,232 +1,273 @@
 
 import React, { useState } from 'react';
-import { FileText, Upload, Trash2, RefreshCw, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import { FileText, Upload, Eye, Trash2, RefreshCw, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const documents = [
   {
     id: 1,
-    fileName: 'Catalogue_Produits_2024.pdf',
-    dateAdded: '2024-01-20',
+    name: 'Catalogue_Produits_2024.pdf',
+    type: 'PDF',
+    uploadDate: '2024-01-15',
+    chunks: 45,
     status: 'indexed',
+    origin: 'manual',
     size: '2.4 MB',
-    type: 'PDF'
+    content: 'Catalogue complet des produits 2024 incluant les nouveautés, les prix et les spécifications techniques...'
   },
   {
     id: 2,
-    fileName: 'FAQ_Support_Client.docx',
-    dateAdded: '2024-01-18',
+    name: 'Politique_Retours.pdf',
+    type: 'PDF',
+    uploadDate: '2024-01-10',
+    chunks: 12,
     status: 'processing',
-    size: '1.1 MB',
-    type: 'DOCX'
-  },
+    origin: 'email',
+    size: '856 KB',
+    content: 'Politique de retours et d\'échanges de la société. Conditions générales, délais et procédures...'
+  }
 ];
 
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'indexed':
-      return <CheckCircle className="w-5 h-5 text-green-500" />;
-    case 'processing':
-      return <Clock className="w-5 h-5 text-green-400" />;
-    case 'error':
-      return <AlertCircle className="w-5 h-5 text-green-600" />;
-    default:
-      return <FileText className="w-5 h-5 text-gray-500" />;
-  }
+const statusColors = {
+  indexed: 'bg-green-500 text-white',
+  processing: 'bg-yellow-500 text-white',
+  error: 'bg-red-500 text-white',
+  pending: 'bg-gray-500 text-white'
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'indexed':
-      return 'bg-green-100 text-green-700 border-green-200';
-    case 'processing':
-      return 'bg-green-50 text-green-600 border-green-150';
-    case 'error':
-      return 'bg-green-200 text-green-800 border-green-300';
-    default:
-      return 'bg-gray-100 text-gray-700 border-gray-200';
-  }
-};
-
-const getFileTypeColor = (type: string) => {
-  switch (type) {
-    case 'PDF':
-      return 'bg-green-100 text-green-700';
-    case 'DOCX':
-      return 'bg-green-50 text-green-600';
-    case 'TXT':
-      return 'bg-green-200 text-green-800';
-    case 'MD':
-      return 'bg-green-150 text-green-750';
-    default:
-      return 'bg-gray-100 text-gray-700';
-  }
+const originColors = {
+  manual: 'bg-blue-100 text-blue-700 border-blue-300',
+  email: 'bg-purple-100 text-purple-700 border-purple-300',
+  api: 'bg-green-100 text-green-700 border-green-300'
 };
 
 export const DocumentsSection = () => {
-  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [expandedDocs, setExpandedDocs] = useState<number[]>([]);
+  const [dragActive, setDragActive] = useState(false);
 
-  const toggleFileSelection = (id: number) => {
-    setSelectedFiles(prev => 
-      prev.includes(id) ? prev.filter(fileId => fileId !== id) : [...prev, id]
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log('File dropped:', e.dataTransfer.files[0]);
+      // Handle file upload logic here
+    }
+  };
+
+  const toggleExpanded = (docId: number) => {
+    setExpandedDocs(prev => 
+      prev.includes(docId) 
+        ? prev.filter(id => id !== docId)
+        : [...prev, docId]
     );
   };
 
+  const filteredDocuments = documents.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === 'all' || doc.type.toLowerCase() === filterType.toLowerCase();
+    return matchesSearch && matchesType;
+  });
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-          Documents Management
+        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          Gestion des Documents
         </h2>
-        <div className="flex space-x-3">
-          <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg">
-            <Upload className="w-4 h-4 mr-2" />
-            Add Document
+      </div>
+
+      {/* Upload Area */}
+      <div
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        className={`relative p-12 border-4 border-dashed rounded-3xl transition-all duration-300 ${
+          dragActive 
+            ? 'border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 scale-105' 
+            : 'border-gray-300 bg-white/70 hover:border-purple-400 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50'
+        }`}
+      >
+        <div className="text-center">
+          <Upload className="w-16 h-16 mx-auto mb-6 text-purple-500" />
+          <h3 className="text-2xl font-bold text-gray-700 mb-4">
+            Glissez et déposez vos documents ici
+          </h3>
+          <p className="text-gray-500 mb-6">ou cliquez pour sélectionner des fichiers</p>
+          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 px-8 py-3 rounded-2xl">
+            <Upload className="w-5 h-5 mr-3" />
+            Choisir des fichiers
           </Button>
-          <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Re-index All
-          </Button>
+          <p className="text-sm text-gray-400 mt-4">
+            Formats supportés: PDF, DOCX, TXT, Images (PNG, JPG)
+          </p>
         </div>
       </div>
 
-      {/* Upload Zone */}
-      <div className="bg-gradient-to-br from-green-50/50 to-green-100/50 border-2 border-dashed border-green-300/50 rounded-2xl p-8 text-center hover:border-green-400/50 transition-all duration-300">
-        <Upload className="w-12 h-12 text-green-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">Upload New Documents</h3>
-        <p className="text-gray-500 mb-4">Drag and drop files here, or click to browse</p>
-        <p className="text-sm text-gray-400">Supported formats: PDF, DOCX, TXT, MD (Max 10MB)</p>
-      </div>
-
-      {/* Document Actions */}
-      {selectedFiles.length > 0 && (
-        <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-200/50">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">
-              {selectedFiles.length} document(s) selected
-            </span>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50">
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete Selected
-              </Button>
-              <Button variant="outline" size="sm" className="text-green-700 border-green-300 hover:bg-green-100">
-                <RefreshCw className="w-4 h-4 mr-1" />
-                Re-index Selected
-              </Button>
-            </div>
+      {/* Filters */}
+      <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-purple-200/50">
+        <div className="flex flex-col md:flex-row gap-6 md:items-center">
+          <div className="relative flex-1">
+            <Search className="w-6 h-6 absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-500" />
+            <input
+              type="text"
+              placeholder="Rechercher des documents..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-14 pr-4 py-4 w-full bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-300/50 focus:border-purple-400 transition-all shadow-lg"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <Filter className="w-6 h-6 text-purple-600" />
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-48 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl shadow-lg">
+                <SelectValue placeholder="Type de fichier" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les types</SelectItem>
+                <SelectItem value="pdf">PDF</SelectItem>
+                <SelectItem value="docx">Word</SelectItem>
+                <SelectItem value="txt">Texte</SelectItem>
+                <SelectItem value="image">Images</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Documents Table */}
-      <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-blue-200/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-green-50/50 to-green-100/50 border-b border-green-100/50">
+            <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
               <tr>
-                <th className="text-left p-4">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                    checked={selectedFiles.length === documents.length}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedFiles(documents.map(d => d.id));
-                      } else {
-                        setSelectedFiles([]);
-                      }
-                    }}
-                  />
-                </th>
-                <th className="text-left p-4 font-semibold text-gray-700">File Name</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Type</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Size</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Date Added</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Status</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Actions</th>
+                <th className="text-left p-6 font-bold">Document</th>
+                <th className="text-left p-6 font-bold">Type</th>
+                <th className="text-left p-6 font-bold">Date</th>
+                <th className="text-left p-6 font-bold">Chunks</th>
+                <th className="text-left p-6 font-bold">Statut</th>
+                <th className="text-left p-6 font-bold">Origine</th>
+                <th className="text-left p-6 font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {documents.map((doc) => (
-                <tr 
-                  key={doc.id} 
-                  className="border-b border-gray-100/50 hover:bg-green-50/30 transition-colors"
-                >
-                  <td className="p-4">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                      checked={selectedFiles.includes(doc.id)}
-                      onChange={() => toggleFileSelection(doc.id)}
-                    />
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                      <span className="font-medium text-gray-800">{doc.fileName}</span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getFileTypeColor(doc.type)}`}>
-                      {doc.type}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-gray-600 text-sm">{doc.size}</span>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-gray-600">{new Date(doc.dateAdded).toLocaleDateString()}</span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center space-x-2">
-                      {getStatusIcon(doc.status)}
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(doc.status)}`}>
+              {filteredDocuments.map((doc) => (
+                <React.Fragment key={doc.id}>
+                  <tr className="border-b border-purple-100 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300">
+                    <td className="p-6">
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => toggleExpanded(doc.id)}
+                          className="p-2 hover:bg-purple-100 rounded-lg transition-colors"
+                        >
+                          {expandedDocs.includes(doc.id) ? (
+                            <ChevronDown className="w-4 h-4 text-purple-600" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-purple-600" />
+                          )}
+                        </button>
+                        <FileText className="w-8 h-8 text-purple-600" />
+                        <div>
+                          <div className="font-bold text-gray-800">{doc.name}</div>
+                          <div className="text-sm text-gray-500">{doc.size}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 rounded-full text-sm font-semibold">
+                        {doc.type}
+                      </span>
+                    </td>
+                    <td className="p-6">
+                      <span className="text-gray-700 font-semibold">{new Date(doc.uploadDate).toLocaleDateString()}</span>
+                    </td>
+                    <td className="p-6">
+                      <span className="font-bold text-purple-600">{doc.chunks}</span>
+                    </td>
+                    <td className="p-6">
+                      <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-lg ${statusColors[doc.status]}`}>
                         {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
                       </span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50">
-                        <RefreshCw className="w-3 h-3" />
-                      </Button>
-                      <Button variant="outline" size="sm" className="text-green-700 border-green-300 hover:bg-green-100">
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="p-6">
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold border-2 ${originColors[doc.origin]}`}>
+                        {doc.origin === 'manual' ? 'Manuel' : doc.origin === 'email' ? 'Email' : 'API'}
+                      </span>
+                    </td>
+                    <td className="p-6">
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white">
+                          <RefreshCw className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                  {expandedDocs.includes(doc.id) && (
+                    <tr>
+                      <td colSpan={7} className="p-6 bg-gradient-to-r from-purple-50 to-pink-50">
+                        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-purple-200">
+                          <h4 className="font-bold text-gray-800 mb-3">Contenu extrait:</h4>
+                          <div className="max-h-40 overflow-y-auto text-gray-700 text-sm leading-relaxed">
+                            {doc.content}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Summary Stats */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-green-50 to-green-100/50 p-4 rounded-xl border border-green-200/50">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-6 rounded-3xl shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 transform text-white">
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-700">{documents.filter(d => d.status === 'indexed').length}</p>
-            <p className="text-green-600 text-sm">Indexed</p>
+            <div className="text-3xl font-bold">98</div>
+            <div className="text-blue-200">Total Documents</div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-100 to-green-200/50 p-4 rounded-xl border border-green-300/50">
+        <div className="bg-gradient-to-br from-green-500 to-green-700 p-6 rounded-3xl shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 transform text-white">
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-800">{documents.filter(d => d.status === 'processing').length}</p>
-            <p className="text-green-700 text-sm">Processing</p>
+            <div className="text-3xl font-bold">1,247</div>
+            <div className="text-green-200">Chunks Indexés</div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-200 to-green-300/50 p-4 rounded-xl border border-green-400/50">
+        <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-6 rounded-3xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 transform text-white">
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-900">{documents.filter(d => d.status === 'error').length}</p>
-            <p className="text-green-800 text-sm">Errors</p>
+            <div className="text-3xl font-bold">5</div>
+            <div className="text-purple-200">En traitement</div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-300 to-green-400/50 p-4 rounded-xl border border-green-500/50">
+        <div className="bg-gradient-to-br from-orange-500 to-red-600 p-6 rounded-3xl shadow-2xl hover:shadow-orange-500/25 hover:scale-105 transition-all duration-300 transform text-white">
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-950">{documents.length}</p>
-            <p className="text-green-900 text-sm">Total Documents</p>
+            <div className="text-3xl font-bold">2</div>
+            <div className="text-orange-200">Erreurs</div>
           </div>
         </div>
       </div>

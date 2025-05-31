@@ -22,6 +22,33 @@ const Index = () => {
         return <ConversationsSection />;
       case 'documents':
         return <DocumentsSection />;
+      case 'knowledge':
+        return (
+          <div className="p-8 text-center">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Base de connaissances
+            </h2>
+            <p className="text-gray-600">Section en cours de développement...</p>
+          </div>
+        );
+      case 'test':
+        return (
+          <div className="p-8 text-center">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">
+              Zone de test
+            </h2>
+            <p className="text-gray-600">Interface de test des prompts en cours de développement...</p>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="p-8 text-center">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              Paramètres système
+            </h2>
+            <p className="text-gray-600">Panel de configuration en cours de développement...</p>
+          </div>
+        );
       default:
         return <OverviewSection />;
     }
@@ -37,7 +64,7 @@ const Index = () => {
           setCollapsed={setSidebarCollapsed}
         />
         
-        <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-72'}`}>
           <TopNav />
           
           <main className="p-6 animate-fade-in">

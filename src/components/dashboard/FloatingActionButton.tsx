@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Plus, UserPlus, Upload, MessageSquare, X } from 'lucide-react';
+import { Plus, Upload, MessageSquare, Settings, FileText, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface FloatingActionButtonProps {
   activeSection: string;
@@ -9,72 +10,67 @@ interface FloatingActionButtonProps {
 export const FloatingActionButton = ({ activeSection }: FloatingActionButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Don't show the FAB on overview section
-  if (activeSection === 'overview') {
-    return null;
-  }
-
-  const getQuickActions = () => {
+  const getActions = () => {
     switch (activeSection) {
-      case 'users':
+      case 'documents':
         return [
-          { icon: UserPlus, label: 'Add User', color: 'from-green-400 to-green-500' },
-          { icon: Upload, label: 'Import CSV', color: 'from-green-500 to-green-600' },
+          { icon: Upload, label: 'Importer document', color: 'from-blue-500 to-blue-600' },
+          { icon: FileText, label: 'Nouveau document', color: 'from-green-500 to-green-600' },
         ];
       case 'conversations':
         return [
-          { icon: MessageSquare, label: 'New Conversation', color: 'from-green-400 to-green-500' },
-          { icon: Upload, label: 'Import Data', color: 'from-green-500 to-green-600' },
+          { icon: MessageSquare, label: 'Nouveau message', color: 'from-purple-500 to-purple-600' },
+          { icon: Users, label: 'Contact utilisateur', color: 'from-pink-500 to-pink-600' },
         ];
-      case 'documents':
+      case 'users':
         return [
-          { icon: Upload, label: 'Upload Document', color: 'from-green-400 to-green-500' },
-          { icon: Plus, label: 'New Folder', color: 'from-green-500 to-green-600' },
+          { icon: Users, label: 'Ajouter utilisateur', color: 'from-green-500 to-green-600' },
+          { icon: MessageSquare, label: 'Envoyer message', color: 'from-blue-500 to-blue-600' },
         ];
       default:
         return [
-          { icon: UserPlus, label: 'Add User', color: 'from-green-400 to-green-500' },
-          { icon: Upload, label: 'Upload Document', color: 'from-green-500 to-green-600' },
+          { icon: Upload, label: 'Téléchargement rapide', color: 'from-blue-500 to-blue-600' },
+          { icon: MessageSquare, label: 'Test message', color: 'from-purple-500 to-purple-600' },
+          { icon: Settings, label: 'Paramètres rapides', color: 'from-gray-500 to-gray-600' },
         ];
     }
   };
 
-  const quickActions = getQuickActions();
+  const actions = getActions();
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Quick Action Buttons */}
+    <div className="fixed bottom-8 right-8 z-50">
+      {/* Action Buttons */}
       {isOpen && (
-        <div className="mb-4 space-y-3 animate-fade-in">
-          {quickActions.map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <div
-                key={index}
-                className={`flex items-center justify-end group animate-scale-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
+        <div className="absolute bottom-16 right-0 space-y-3 animate-fade-in">
+          {actions.map((action, index) => (
+            <div
+              key={index}
+              className="flex items-center space-x-3 animate-scale-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <span className="bg-white/90 backdrop-blur-lg px-4 py-2 rounded-full shadow-lg text-sm font-medium text-gray-700 border border-gray-200">
+                {action.label}
+              </span>
+              <Button
+                className={`w-12 h-12 rounded-full bg-gradient-to-r ${action.color} hover:scale-110 transition-all duration-300 shadow-2xl`}
               >
-                <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-2 rounded-lg text-sm font-medium shadow-lg border border-gray-200/50 opacity-0 group-hover:opacity-100 transition-opacity mr-3">
-                  {action.label}
-                </span>
-                <button className={`w-12 h-12 bg-gradient-to-r ${action.color} text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover-scale flex items-center justify-center`}>
-                  <Icon className="w-5 h-5" />
-                </button>
-              </div>
-            );
-          })}
+                <action.icon className="w-6 h-6 text-white" />
+              </Button>
+            </div>
+          ))}
         </div>
       )}
 
       {/* Main FAB */}
-      <button
+      <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
+        className={`w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-110 ${
           isOpen ? 'rotate-45' : ''
         }`}
       >
-        {isOpen ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
-      </button>
+        <Plus className="w-8 h-8 text-white" />
+      </Button>
     </div>
   );
 };
