@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { TopNav } from '@/components/dashboard/TopNav';
@@ -60,14 +59,6 @@ const Index = () => {
           <TopNav onLogout={handleLogout} />
           
           <main className="p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Bienvenue sur votre espace de gestion WhatsApp
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Gérez vos conversations, utilisateurs et documents en toute simplicité
-              </p>
-            </div>
             {renderActiveSection()}
           </main>
         </div>

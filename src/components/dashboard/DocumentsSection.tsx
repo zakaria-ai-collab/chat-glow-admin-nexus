@@ -1,12 +1,16 @@
 
 import React, { useState } from 'react';
-import { FileText, Upload, Eye, Trash2, Search, ChevronDown, ChevronRight } from 'lucide-react';
+import { FileText, Upload, Eye, Trash2, Search, ChevronDown, ChevronRight, Filter, Calendar, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { documents } from '@/data/mockData';
 
 export const DocumentsSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
   const [expandedDocs, setExpandedDocs] = useState<number[]>([]);
   const [dragActive, setDragActive] = useState(false);
 
@@ -53,9 +57,17 @@ export const DocumentsSection = () => {
     );
   };
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDocuments = documents.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'all' || doc.type.toLowerCase() === typeFilter.toLowerCase();
+    const matchesStatus = statusFilter === 'all' || statusFilter === 'indexed'; // Simplified for demo
+    
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
+  const handleExportDocuments = () => {
+    console.log('Exporting documents with filters:', { searchTerm, typeFilter, statusFilter, dateFilter });
+  };
 
   return (
     <div className="space-y-6">
@@ -64,6 +76,12 @@ export const DocumentsSection = () => {
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Gestion des documents
         </h2>
+        {filteredDocuments.length > 0 && (
+          <Button onClick={handleExportDocuments} className="bg-green-600 hover:bg-green-700">
+            <Download className="w-4 h-4 mr-2" />
+            Export Excel
+          </Button>
+        )}
       </div>
 
       {/* Upload Area */}
@@ -95,17 +113,59 @@ export const DocumentsSection = () => {
         </div>
       </div>
 
-      {/* Search */}
+      {/* Filters */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-        <div className="relative">
-          <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Rechercher des documents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Rechercher par nom..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger>
+              <FileText className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Type de fichier" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les types</SelectItem>
+              <SelectItem value="pdf">PDF</SelectItem>
+              <SelectItem value="docx">DOCX</SelectItem>
+              <SelectItem value="txt">TXT</SelectItem>
+              <SelectItem value="image">Images</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger>
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les statuts</SelectItem>
+              <SelectItem value="indexed">Indexé</SelectItem>
+              <SelectItem value="processing">En traitement</SelectItem>
+              <SelectItem value="error">Erreur</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={dateFilter} onValueChange={setDateFilter}>
+            <SelectTrigger>
+              <Calendar className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Date d'upload" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les dates</SelectItem>
+              <SelectItem value="today">Aujourd'hui</SelectItem>
+              <SelectItem value="week">Cette semaine</SelectItem>
+              <SelectItem value="month">Ce mois</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -191,8 +251,8 @@ export const DocumentsSection = () => {
       {/* Summary */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="text-center">
-          <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length}</div>
-          <div className="text-gray-600 dark:text-gray-400">Documents au total</div>
+          <div className="text-3xl font-bold text-gray-900 dark:text-white">{filteredDocuments.length}</div>
+          <div className="text-gray-600 dark:text-gray-400">Documents trouvés</div>
         </div>
       </div>
     </div>
