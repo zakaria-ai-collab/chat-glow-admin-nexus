@@ -4,36 +4,7 @@ import { Search, Filter, Edit2, MessageCircle, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-const users = [
-  { 
-    id: 1, 
-    phone: '+33612345678', 
-    name: 'Ahmed Bennani', 
-    tag: 'client', 
-    firstContact: '2024-01-15', 
-    lastMessage: '2024-01-20',
-    totalMessages: 45
-  },
-  { 
-    id: 2, 
-    phone: '+33687654321', 
-    name: '', 
-    tag: 'prospect', 
-    firstContact: '2024-01-10', 
-    lastMessage: '2024-01-18',
-    totalMessages: 12
-  },
-  { 
-    id: 3, 
-    phone: '+33645123789', 
-    name: 'Youssef Mokhtar', 
-    tag: 'test', 
-    firstContact: '2024-01-20', 
-    lastMessage: '2024-01-22',
-    totalMessages: 23
-  },
-];
+import { moroccanUsers } from '@/data/mockData';
 
 const tagColors = {
   client: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
@@ -46,6 +17,7 @@ export const UsersSection = () => {
   const [filterTag, setFilterTag] = useState('all');
   const [editingUser, setEditingUser] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
+  const [users, setUsers] = useState(moroccanUsers);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -60,16 +32,26 @@ export const UsersSection = () => {
   };
 
   const handleSaveName = () => {
-    console.log('Saving name:', editName);
+    if (editingUser) {
+      setUsers(users.map(user => 
+        user.id === editingUser ? { ...user, name: editName } : user
+      ));
+    }
     setEditingUser(null);
     setEditName('');
+  };
+
+  const handleTagChange = (userId: number, newTag: string) => {
+    setUsers(users.map(user => 
+      user.id === userId ? { ...user, tag: newTag as 'client' | 'prospect' | 'test' } : user
+    ));
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Users & Clients
+          Utilisateurs & Clients
         </h2>
       </div>
 
@@ -80,7 +62,7 @@ export const UsersSection = () => {
             <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search by name or phone..."
+              placeholder="Rechercher par nom ou numéro..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -89,10 +71,10 @@ export const UsersSection = () => {
           
           <Select value={filterTag} onValueChange={setFilterTag}>
             <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by tag" />
+              <SelectValue placeholder="Filtrer par tag" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
+              <SelectItem value="all">Tous les tags</SelectItem>
               <SelectItem value="client">Client</SelectItem>
               <SelectItem value="prospect">Prospect</SelectItem>
               <SelectItem value="test">Test</SelectItem>
@@ -107,12 +89,12 @@ export const UsersSection = () => {
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">WhatsApp Number</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Name</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Numéro WhatsApp</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Nom</th>
                 <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Tag</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">First Contact</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Last Message</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Total Messages</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Premier contact</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Dernier message</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Total messages</th>
                 <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Actions</th>
               </tr>
             </thead>
@@ -121,8 +103,8 @@ export const UsersSection = () => {
                 <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="p-4">
                     <button 
-                      className="text-blue-600 hover:text-blue-800 font-mono"
-                      onClick={() => console.log('View messages for', user.phone)}
+                      className="text-blue-600 hover:text-blue-800 font-mono text-base"
+                      onClick={() => console.log('Voir messages pour', user.phone)}
                     >
                       {user.phone}
                     </button>
@@ -134,15 +116,15 @@ export const UsersSection = () => {
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
                           className="h-8"
-                          placeholder="Enter name"
+                          placeholder="Entrer le nom"
                         />
-                        <Button size="sm" onClick={handleSaveName}>Save</Button>
-                        <Button size="sm" variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>
+                        <Button size="sm" onClick={handleSaveName}>Sauver</Button>
+                        <Button size="sm" variant="outline" onClick={() => setEditingUser(null)}>Annuler</Button>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-900 dark:text-white">
-                          {user.name || 'No name set'}
+                        <span className="text-gray-900 dark:text-white text-base">
+                          {user.name || 'Nom non défini'}
                         </span>
                         <Button
                           size="sm"
@@ -155,15 +137,22 @@ export const UsersSection = () => {
                     )}
                   </td>
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${tagColors[user.tag]}`}>
-                      {user.tag.charAt(0).toUpperCase() + user.tag.slice(1)}
-                    </span>
+                    <Select value={user.tag} onValueChange={(value) => handleTagChange(user.id, value)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="client">Client</SelectItem>
+                        <SelectItem value="prospect">Prospect</SelectItem>
+                        <SelectItem value="test">Test</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </td>
                   <td className="p-4 text-gray-600 dark:text-gray-400">
-                    {new Date(user.firstContact).toLocaleDateString()}
+                    {new Date(user.firstContact).toLocaleDateString('fr-FR')}
                   </td>
                   <td className="p-4 text-gray-600 dark:text-gray-400">
-                    {new Date(user.lastMessage).toLocaleDateString()}
+                    {new Date(user.lastMessage).toLocaleDateString('fr-FR')}
                   </td>
                   <td className="p-4 text-gray-900 dark:text-white font-semibold">
                     {user.totalMessages}
@@ -202,7 +191,7 @@ export const UsersSection = () => {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-600">{users.filter(u => u.tag === 'test').length}</div>
-            <div className="text-gray-600 dark:text-gray-400">Test Users</div>
+            <div className="text-gray-600 dark:text-gray-400">Utilisateurs Test</div>
           </div>
         </div>
       </div>

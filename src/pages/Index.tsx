@@ -8,10 +8,24 @@ import { OverviewSection } from '@/components/dashboard/OverviewSection';
 import { DocumentsSection } from '@/components/dashboard/DocumentsSection';
 import { ExportSection } from '@/components/dashboard/ExportSection';
 import { SettingsSection } from '@/components/dashboard/SettingsSection';
+import Login from './Login';
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   const renderActiveSection = () => {
     switch (activeSection) {
@@ -43,9 +57,17 @@ const Index = () => {
         />
         
         <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-          <TopNav />
+          <TopNav onLogout={handleLogout} />
           
           <main className="p-6">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Bienvenue sur votre espace de gestion WhatsApp
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Gérez vos conversations, utilisateurs et documents en toute simplicité
+              </p>
+            </div>
             {renderActiveSection()}
           </main>
         </div>

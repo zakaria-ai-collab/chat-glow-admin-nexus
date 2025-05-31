@@ -3,41 +3,7 @@ import React, { useState } from 'react';
 import { FileText, Upload, Eye, Trash2, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-const documents = [
-  {
-    id: 1,
-    name: 'Product_Catalog_2024.pdf',
-    type: 'PDF',
-    uploadDate: '2024-01-15',
-    origin: 'manual',
-    size: '2.4 MB',
-    content: 'Complete product catalog for 2024 including new products, prices and technical specifications...'
-  },
-  {
-    id: 2,
-    name: 'Return_Policy.pdf',
-    type: 'PDF',
-    uploadDate: '2024-01-10',
-    origin: 'email',
-    size: '856 KB',
-    content: 'Company return and exchange policy. General conditions, deadlines and procedures...'
-  },
-  {
-    id: 3,
-    name: 'User_Manual.docx',
-    type: 'DOCX',
-    uploadDate: '2024-01-08',
-    origin: 'manual',
-    size: '1.2 MB',
-    content: 'Comprehensive user manual with step-by-step instructions...'
-  }
-];
-
-const originColors = {
-  manual: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-  email: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-};
+import { documents } from '@/data/mockData';
 
 export const DocumentsSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +26,7 @@ export const DocumentsSection = () => {
     setDragActive(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      console.log('File dropped:', e.dataTransfer.files[0]);
+      console.log('Fichier déposé:', e.dataTransfer.files[0]);
       // Handle file upload logic here
     }
   };
@@ -72,7 +38,7 @@ export const DocumentsSection = () => {
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        console.log('File selected:', file);
+        console.log('Fichier sélectionné:', file);
         // Handle file upload logic here
       }
     };
@@ -96,7 +62,7 @@ export const DocumentsSection = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Document Management
+          Gestion des documents
         </h2>
       </div>
 
@@ -116,15 +82,15 @@ export const DocumentsSection = () => {
         <div className="text-center">
           <Upload className="w-12 h-12 mx-auto mb-4 text-blue-600" />
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            Drag and drop your documents here
+            Glissez-déposez vos documents ici
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">or click to select files</p>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">ou cliquez pour sélectionner des fichiers</p>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-base h-12 px-6">
             <Upload className="w-4 h-4 mr-2" />
-            Choose Files
+            Choisir des fichiers
           </Button>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Supported formats: PDF, DOCX, TXT, Images (PNG, JPG)
+            Formats supportés: PDF, DOCX, TXT, Images (PNG, JPG)
           </p>
         </div>
       </div>
@@ -135,7 +101,7 @@ export const DocumentsSection = () => {
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
             type="text"
-            placeholder="Search documents..."
+            placeholder="Rechercher des documents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -149,11 +115,10 @@ export const DocumentsSection = () => {
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Document</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Nom</th>
                 <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Type</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Upload Date</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Origin</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Details</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Date d'upload</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Détails</th>
                 <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Actions</th>
               </tr>
             </thead>
@@ -165,7 +130,7 @@ export const DocumentsSection = () => {
                       <div className="flex items-center gap-3">
                         <FileText className="w-6 h-6 text-blue-600" />
                         <div>
-                          <div className="font-semibold text-gray-900 dark:text-white">{doc.name}</div>
+                          <div className="font-semibold text-gray-900 dark:text-white text-base">{doc.name}</div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">{doc.size}</div>
                         </div>
                       </div>
@@ -176,25 +141,21 @@ export const DocumentsSection = () => {
                       </span>
                     </td>
                     <td className="p-4 text-gray-600 dark:text-gray-400">
-                      {new Date(doc.uploadDate).toLocaleDateString()}
-                    </td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${originColors[doc.origin]}`}>
-                        {doc.origin === 'manual' ? 'Manual' : 'Email'}
-                      </span>
+                      {new Date(doc.uploadDate).toLocaleDateString('fr-FR')}
                     </td>
                     <td className="p-4">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => toggleExpanded(doc.id)}
+                        className="text-base"
                       >
                         {expandedDocs.includes(doc.id) ? (
-                          <ChevronDown className="w-4 h-4" />
+                          <ChevronDown className="w-4 h-4 mr-1" />
                         ) : (
-                          <ChevronRight className="w-4 h-4" />
+                          <ChevronRight className="w-4 h-4 mr-1" />
                         )}
-                        Details
+                        Détails
                       </Button>
                     </td>
                     <td className="p-4">
@@ -210,9 +171,9 @@ export const DocumentsSection = () => {
                   </tr>
                   {expandedDocs.includes(doc.id) && (
                     <tr>
-                      <td colSpan={6} className="p-4 bg-gray-50 dark:bg-gray-900">
+                      <td colSpan={5} className="p-4 bg-gray-50 dark:bg-gray-900">
                         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                          <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Extracted Content:</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Contenu extrait:</h4>
                           <div className="max-h-32 overflow-y-auto text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                             {doc.content}
                           </div>
@@ -231,7 +192,7 @@ export const DocumentsSection = () => {
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="text-center">
           <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length}</div>
-          <div className="text-gray-600 dark:text-gray-400">Total Documents</div>
+          <div className="text-gray-600 dark:text-gray-400">Documents au total</div>
         </div>
       </div>
     </div>

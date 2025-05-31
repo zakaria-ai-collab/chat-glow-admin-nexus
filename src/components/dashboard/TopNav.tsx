@@ -6,13 +6,17 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut } from 'lucide-react';
 
-export const TopNav = () => {
+interface TopNavProps {
+  onLogout?: () => void;
+}
+
+export const TopNav = ({ onLogout }: TopNavProps) => {
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">WhatsApp RAG Assistant</p>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Dashboard Admin</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Assistant WhatsApp RAG</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -28,15 +32,15 @@ export const TopNav = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
                 <User className="w-4 h-4 mr-2" />
-                Profile
+                Profil
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="w-4 h-4 mr-2" />
-                Settings
+                Paramètres
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                Déconnexion
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
