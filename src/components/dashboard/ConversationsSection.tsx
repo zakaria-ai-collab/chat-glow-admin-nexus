@@ -1,182 +1,209 @@
+
 import React, { useState } from 'react';
-import { Search, Download, Filter, Bot, User } from 'lucide-react';
+import { Search, MessageCircle, User, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const conversations = [
   {
     id: 1,
-    user: 'Rachid Benali',
-    phone: '0623456789',
-    question: 'Quels sont vos horaires d\'ouverture?',
-    answer: 'Nos horaires d\'ouverture sont du lundi au vendredi de 9h à 18h, et le samedi de 10h à 16h.',
-    confidence: 0.95,
-    type: 'auto',
-    timestamp: '2024-01-25 14:30',
+    phone: '+33612345678',
+    name: 'Ahmed Bennani',
+    lastMessage: 'Bonjour, avez-vous des informations sur les prix?',
+    timestamp: '2024-01-22 14:30',
+    isFromUser: true,
+    unreadCount: 2
   },
+  {
+    id: 2,
+    phone: '+33687654321',
+    name: '',
+    lastMessage: 'Merci pour votre aide!',
+    timestamp: '2024-01-22 12:15',
+    isFromUser: true,
+    unreadCount: 0
+  },
+  {
+    id: 3,
+    phone: '+33645123789',
+    name: 'Youssef Mokhtar',
+    lastMessage: 'Assistant: Voici les informations demandées...',
+    timestamp: '2024-01-22 10:45',
+    isFromUser: false,
+    unreadCount: 1
+  }
+];
+
+const messageHistory = [
+  { id: 1, content: 'Bonjour, comment allez-vous?', isFromUser: true, timestamp: '10:30' },
+  { id: 2, content: 'Bonjour! Je vais bien, merci. Comment puis-je vous aider aujourd\'hui?', isFromUser: false, timestamp: '10:31' },
+  { id: 3, content: 'J\'aimerais avoir des informations sur vos produits', isFromUser: true, timestamp: '10:32' },
+  { id: 4, content: 'Bien sûr! Voici notre catalogue de produits...', isFromUser: false, timestamp: '10:33', isLowConfidence: true },
 ];
 
 export const ConversationsSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [dateFilter, setDateFilter] = useState('all');
-  const [userFilter, setUserFilter] = useState('all');
+  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-white bg-gradient-to-r from-green-500 to-emerald-600';
-    if (confidence >= 0.6) return 'text-white bg-gradient-to-r from-yellow-500 to-orange-600';
-    return 'text-white bg-gradient-to-r from-red-500 to-pink-600';
+  const filteredConversations = conversations.filter(conv => 
+    conv.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    conv.phone.includes(searchTerm)
+  );
+
+  const handleSelectConversation = (convId: number) => {
+    setSelectedConversation(convId);
   };
 
-  const getTypeIcon = (type: string) => {
-    return type === 'auto' ? (
-      <Bot className="w-5 h-5 text-purple-600" />
-    ) : (
-      <User className="w-5 h-5 text-blue-600" />
-    );
-  };
-
-  const filteredConversations = conversations.filter(conv => {
-    const matchesSearch = conv.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         conv.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         conv.answer.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
+  const selectedConv = conversations.find(c => c.id === selectedConversation);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Conversations
         </h2>
-        <div className="flex space-x-4">
-          <Button variant="outline" className="border-2 border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-2xl shadow-lg px-6 py-3">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
-          <Button variant="outline" className="border-2 border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 rounded-2xl shadow-lg px-6 py-3">
-            <Download className="w-4 h-4 mr-2" />
-            Export JSON
-          </Button>
-        </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-blue-200/50">
-        <div className="flex flex-col lg:flex-row gap-6 lg:items-center">
-          <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500" />
-            <input
-              type="text"
-              placeholder="Search conversations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-4 w-full bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300/50 focus:border-blue-400 transition-all shadow-lg"
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+        {/* Conversations List */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="relative">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <Filter className="w-5 h-5 text-blue-600" />
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-48 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl shadow-lg">
-                <SelectValue placeholder="Filter by date" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">This Week</SelectItem>
-                <SelectItem value="month">This Month</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={userFilter} onValueChange={setUserFilter}>
-              <SelectTrigger className="w-48 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl shadow-lg">
-                <SelectValue placeholder="Filter by user" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Users</SelectItem>
-                <SelectItem value="rachid">Rachid Benali</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="overflow-y-auto h-full">
+            {filteredConversations.map((conversation) => (
+              <div
+                key={conversation.id}
+                onClick={() => handleSelectConversation(conversation.id)}
+                className={`p-4 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                  selectedConversation === conversation.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {conversation.name || conversation.phone}
+                      </span>
+                      {!conversation.name && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('Add name for', conversation.phone);
+                          }}
+                        >
+                          Add Name
+                        </Button>
+                      )}
+                    </div>
+                    {conversation.name && (
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        {conversation.phone}
+                      </div>
+                    )}
+                    <div className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                      {conversation.lastMessage}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      <Clock className="w-3 h-3" />
+                      {conversation.timestamp}
+                    </div>
+                  </div>
+                  {conversation.unreadCount > 0 && (
+                    <div className="bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {conversation.unreadCount}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Conversations List */}
-      <div className="space-y-6">
-        {filteredConversations.map((conversation) => (
-          <div
-            key={conversation.id}
-            className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-purple-200/50 hover:shadow-purple-500/10 hover:scale-[1.02] transition-all duration-300"
-          >
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                  {conversation.user.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-800 text-xl">{conversation.user}</h3>
-                  <p className="text-sm text-purple-600 font-mono bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl inline-block shadow-md">{conversation.phone}</p>
+        {/* Message Thread */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col">
+          {selectedConv ? (
+            <>
+              {/* Chat Header */}
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {selectedConv.name || selectedConv.phone}
+                    </h3>
+                    {selectedConv.name && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{selectedConv.phone}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl shadow-lg">
-                  {getTypeIcon(conversation.type)}
-                  <span className="text-sm text-purple-700 font-bold">
-                    {conversation.type === 'auto' ? 'Auto Response' : 'Fallback'}
-                  </span>
-                </div>
-                
-                <div className={`px-4 py-2 rounded-xl text-sm font-bold shadow-lg ${getConfidenceColor(conversation.confidence)}`}>
-                  {Math.round(conversation.confidence * 100)}% confidence
-                </div>
-                
-                <span className="text-sm text-blue-700 bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-3 rounded-xl shadow-lg font-semibold">{conversation.timestamp}</span>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-500 shadow-lg">
-                <p className="text-sm font-bold text-blue-800 mb-2">Question:</p>
-                <p className="text-gray-800 font-medium">{conversation.question}</p>
-              </div>
-              
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-500 shadow-lg">
-                <p className="text-sm font-bold text-purple-800 mb-2">Answer:</p>
-                <p className="text-gray-800 font-medium">{conversation.answer}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-8 rounded-3xl shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 transform">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">{conversations.filter(c => c.type === 'auto').length}</span>
+              {/* Messages */}
+              <div className="flex-1 p-4 overflow-y-auto space-y-4">
+                {messageHistory.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.isFromUser ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                        message.isFromUser
+                          ? 'bg-blue-600 text-white'
+                          : `bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white ${
+                              message.isLowConfidence ? 'border-l-4 border-yellow-500' : ''
+                            }`
+                      }`}
+                    >
+                      <p className="text-sm">{message.content}</p>
+                      <p className={`text-xs mt-1 ${
+                        message.isFromUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                      }`}>
+                        {message.timestamp}
+                      </p>
+                      {message.isLowConfidence && (
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                          Low confidence response
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Actions */}
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline">Assign to Agent</Button>
+                  <Button size="sm" variant="outline">Resolve</Button>
+                  <Button size="sm" variant="outline">Mark as Spam</Button>
+                  <Button size="sm" variant="outline">View Profile</Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 dark:text-gray-400">Select a conversation to view messages</p>
+              </div>
             </div>
-            <p className="text-white font-bold text-xl">Auto Responses</p>
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-8 rounded-3xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 transform">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">{conversations.filter(c => c.type === 'fallback').length}</span>
-            </div>
-            <p className="text-white font-bold text-xl">Fallbacks</p>
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 transform">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">
-                {Math.round((conversations.reduce((acc, c) => acc + c.confidence, 0) / conversations.length) * 100)}%
-              </span>
-            </div>
-            <p className="text-white font-bold text-xl">Avg Confidence</p>
-          </div>
+          )}
         </div>
       </div>
     </div>

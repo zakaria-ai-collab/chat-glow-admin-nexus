@@ -9,9 +9,9 @@ import {
   Menu,
   Bot,
   Settings,
-  Database,
-  TestTube
+  Download
 } from 'lucide-react';
+import { DarkModeToggle } from './DarkModeToggle';
 
 interface SidebarProps {
   activeSection: string;
@@ -21,48 +21,44 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart3, badge: null },
-  { id: 'users', label: 'Utilisateurs & Clients', icon: Users, badge: 234 },
+  { id: 'overview', label: 'Overview', icon: BarChart3 },
+  { id: 'users', label: 'Users & Clients', icon: Users, badge: 234 },
   { id: 'conversations', label: 'Conversations', icon: MessageSquare, badge: 12 },
   { id: 'documents', label: 'Documents', icon: FileText, badge: 5 },
-  { id: 'knowledge', label: 'Base de connaissances', icon: Database, badge: null },
-  { id: 'test', label: 'Zone de test', icon: TestTube, badge: null },
-  { id: 'settings', label: 'Paramètres', icon: Settings, badge: null },
+  { id: 'export', label: 'Export Data', icon: Download },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 export const Sidebar = ({ activeSection, setActiveSection, collapsed, setCollapsed }: SidebarProps) => {
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-full bg-white/95 backdrop-blur-xl border-r border-purple-200/50 shadow-2xl transition-all duration-300 z-40",
-      collapsed ? "w-20" : "w-72"
+      "fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-40",
+      collapsed ? "w-16" : "w-64"
     )}>
       <div className="p-4">
         <div className="flex items-center justify-between mb-8">
           {!collapsed && (
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <Bot className="w-7 h-7 text-white" />
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Bot className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   WhatsApp RAG
                 </h2>
-                <p className="text-xs text-gray-500 font-medium">Admin Dashboard</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
               </div>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-3 hover:bg-purple-100 rounded-xl transition-all duration-200 hover:scale-105 group"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
-            <Menu className={cn(
-              "transition-all duration-200 text-gray-600 group-hover:text-purple-600",
-              collapsed ? "w-6 h-6" : "w-5 h-5"
-            )} />
+            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
-        <nav className="space-y-3">
+        <nav className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
@@ -72,65 +68,38 @@ export const Sidebar = ({ activeSection, setActiveSection, collapsed, setCollaps
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={cn(
-                  "w-full flex items-center rounded-2xl transition-all duration-200 group relative overflow-hidden",
-                  collapsed ? "p-4 justify-center" : "p-4 space-x-4",
+                  "w-full flex items-center rounded-lg transition-colors p-3",
+                  collapsed ? "justify-center" : "space-x-3",
                   isActive 
-                    ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-700 shadow-xl shadow-purple-100/50 scale-105 border-2 border-purple-300/50" 
-                    : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 text-gray-600 hover:text-purple-600 hover:scale-102"
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
                 )}
               >
-                {/* Active indicator */}
-                {isActive && (
-                  <div className="absolute left-0 top-0 w-1.5 h-full bg-gradient-to-b from-purple-500 to-pink-500 rounded-r-full" />
-                )}
-                
-                <div className="relative flex items-center">
-                  <Icon className={cn(
-                    "transition-all duration-200 flex-shrink-0",
-                    collapsed ? "w-7 h-7" : "w-6 h-6",
-                    isActive ? "text-purple-600 drop-shadow-sm" : "group-hover:text-purple-600"
-                  )} />
-                  
-                  {/* Badge for notifications */}
-                  {item.badge && !collapsed && (
-                    <span className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
-                      {item.badge > 99 ? '99+' : item.badge}
-                    </span>
-                  )}
-                </div>
+                <Icon className="w-5 h-5 flex-shrink-0" />
                 
                 {!collapsed && (
-                  <div className="flex-1 text-left flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-sm block">{item.label}</span>
-                      {isActive && (
-                        <div className="w-full h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mt-1 opacity-70" />
-                      )}
-                    </div>
+                  <div className="flex items-center justify-between flex-1">
+                    <span className="font-medium">{item.label}</span>
                     {item.badge && (
-                      <span className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg">
-                        {item.badge > 99 ? '99+' : item.badge}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {/* Tooltip for collapsed state */}
-                {collapsed && (
-                  <div className="absolute left-full ml-4 px-4 py-2 bg-gray-900/90 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 shadow-2xl backdrop-blur-sm">
-                    {item.label}
-                    {item.badge && (
-                      <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                      <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs px-2 py-1 rounded-full">
                         {item.badge}
                       </span>
                     )}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900/90" />
                   </div>
                 )}
               </button>
             );
           })}
         </nav>
+
+        {!collapsed && (
+          <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Dark Mode</span>
+              <DarkModeToggle />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

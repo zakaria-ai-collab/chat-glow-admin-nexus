@@ -1,29 +1,51 @@
 
 import React, { useState } from 'react';
-import { Download, Search, Filter } from 'lucide-react';
+import { Search, Filter, Edit2, MessageCircle, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const users = [
-  { id: 1, phone: '0612345678', name: 'Ahmed Bennani', status: 'active', firstContact: '2024-01-15', tag: 'client' },
-  { id: 2, phone: '0687654321', name: 'Fatima El Alami', status: 'inactive', firstContact: '2024-01-10', tag: 'prospect' },
-  { id: 3, phone: '0645123789', name: 'Youssef Mokhtar', status: 'active', firstContact: '2024-01-20', tag: 'client' },
+  { 
+    id: 1, 
+    phone: '+33612345678', 
+    name: 'Ahmed Bennani', 
+    tag: 'client', 
+    firstContact: '2024-01-15', 
+    lastMessage: '2024-01-20',
+    totalMessages: 45
+  },
+  { 
+    id: 2, 
+    phone: '+33687654321', 
+    name: '', 
+    tag: 'prospect', 
+    firstContact: '2024-01-10', 
+    lastMessage: '2024-01-18',
+    totalMessages: 12
+  },
+  { 
+    id: 3, 
+    phone: '+33645123789', 
+    name: 'Youssef Mokhtar', 
+    tag: 'test', 
+    firstContact: '2024-01-20', 
+    lastMessage: '2024-01-22',
+    totalMessages: 23
+  },
 ];
 
 const tagColors = {
-  client: 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-300',
-  prospect: 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 border-blue-300',
-  test: 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300',
-};
-
-const statusColors = {
-  active: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
-  inactive: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
+  client: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+  prospect: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+  test: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
 };
 
 export const UsersSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTag, setFilterTag] = useState('all');
+  const [editingUser, setEditingUser] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -32,96 +54,129 @@ export const UsersSection = () => {
     return matchesSearch && matchesTag;
   });
 
+  const handleEditName = (userId: number, currentName: string) => {
+    setEditingUser(userId);
+    setEditName(currentName);
+  };
+
+  const handleSaveName = () => {
+    console.log('Saving name:', editName);
+    setEditingUser(null);
+    setEditName('');
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Users & Clients
         </h2>
-        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 px-8 py-3 rounded-2xl">
-          <Download className="w-5 h-5 mr-3" />
-          Export to Excel
-        </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl border border-purple-200/50">
-        <div className="flex flex-col md:flex-row gap-6 md:items-center">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="w-6 h-6 absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-500" />
-            <input
+            <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
               type="text"
               placeholder="Search by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-14 pr-4 py-4 w-full bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-300/50 focus:border-purple-400 transition-all shadow-lg"
+              className="pl-10"
             />
           </div>
           
-          <div className="flex items-center space-x-4">
-            <Filter className="w-6 h-6 text-purple-600" />
-            <Select value={filterTag} onValueChange={setFilterTag}>
-              <SelectTrigger className="w-48 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl shadow-lg">
-                <SelectValue placeholder="Filter by tag" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Tags</SelectItem>
-                <SelectItem value="client">Client</SelectItem>
-                <SelectItem value="prospect">Prospect</SelectItem>
-                <SelectItem value="test">Test</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={filterTag} onValueChange={setFilterTag}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by tag" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Tags</SelectItem>
+              <SelectItem value="client">Client</SelectItem>
+              <SelectItem value="prospect">Prospect</SelectItem>
+              <SelectItem value="test">Test</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-blue-200/50 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+            <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="text-left p-6 font-bold">WhatsApp Number</th>
-                <th className="text-left p-6 font-bold">Name</th>
-                <th className="text-left p-6 font-bold">Status</th>
-                <th className="text-left p-6 font-bold">First Contact</th>
-                <th className="text-left p-6 font-bold">Tag</th>
-                <th className="text-left p-6 font-bold">Actions</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">WhatsApp Number</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Name</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Tag</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">First Contact</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Last Message</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Total Messages</th>
+                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user, index) => (
-                <tr key={user.id} className="border-b border-purple-100 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-300">
-                  <td className="p-6">
-                    <span className="font-mono text-purple-700 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl shadow-md">{user.phone}</span>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="p-4">
+                    <button 
+                      className="text-blue-600 hover:text-blue-800 font-mono"
+                      onClick={() => console.log('View messages for', user.phone)}
+                    >
+                      {user.phone}
+                    </button>
                   </td>
-                  <td className="p-6">
-                    <span className="font-bold text-gray-800 text-lg">{user.name}</span>
+                  <td className="p-4">
+                    {editingUser === user.id ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="h-8"
+                          placeholder="Enter name"
+                        />
+                        <Button size="sm" onClick={handleSaveName}>Save</Button>
+                        <Button size="sm" variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-900 dark:text-white">
+                          {user.name || 'No name set'}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEditName(user.id, user.name)}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
                   </td>
-                  <td className="p-6">
-                    <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-lg ${statusColors[user.status]}`}>
-                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="p-6">
-                    <span className="text-gray-700 font-semibold">{new Date(user.firstContact).toLocaleDateString()}</span>
-                  </td>
-                  <td className="p-6">
-                    <span className={`px-4 py-2 rounded-full text-sm font-bold border-2 shadow-lg ${tagColors[user.tag]}`}>
+                  <td className="p-4">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${tagColors[user.tag]}`}>
                       {user.tag.charAt(0).toUpperCase() + user.tag.slice(1)}
                     </span>
                   </td>
-                  <td className="p-6">
-                    <Select defaultValue={user.tag}>
-                      <SelectTrigger className="w-36 h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl shadow-md">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="client">Client</SelectItem>
-                        <SelectItem value="prospect">Prospect</SelectItem>
-                        <SelectItem value="test">Test</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <td className="p-4 text-gray-600 dark:text-gray-400">
+                    {new Date(user.firstContact).toLocaleDateString()}
+                  </td>
+                  <td className="p-4 text-gray-600 dark:text-gray-400">
+                    {new Date(user.lastMessage).toLocaleDateString()}
+                  </td>
+                  <td className="p-4 text-gray-900 dark:text-white font-semibold">
+                    {user.totalMessages}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="outline">
+                        <MessageCircle className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -131,29 +186,23 @@ export const UsersSection = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-8 rounded-3xl shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 transform">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">{users.filter(u => u.tag === 'client').length}</span>
-            </div>
-            <p className="text-white font-bold text-xl">Clients</p>
+            <div className="text-3xl font-bold text-green-600">{users.filter(u => u.tag === 'client').length}</div>
+            <div className="text-gray-600 dark:text-gray-400">Clients</div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-8 rounded-3xl shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 transform">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">{users.filter(u => u.tag === 'prospect').length}</span>
-            </div>
-            <p className="text-white font-bold text-xl">Prospects</p>
+            <div className="text-3xl font-bold text-blue-600">{users.filter(u => u.tag === 'prospect').length}</div>
+            <div className="text-gray-600 dark:text-gray-400">Prospects</div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-8 rounded-3xl shadow-2xl hover:shadow-purple-500/25 hover:scale-105 transition-all duration-300 transform">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl font-bold text-white">{users.filter(u => u.status === 'active').length}</span>
-            </div>
-            <p className="text-white font-bold text-xl">Active Users</p>
+            <div className="text-3xl font-bold text-gray-600">{users.filter(u => u.tag === 'test').length}</div>
+            <div className="text-gray-600 dark:text-gray-400">Test Users</div>
           </div>
         </div>
       </div>
