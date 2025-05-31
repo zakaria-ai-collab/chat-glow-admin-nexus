@@ -4,6 +4,7 @@ import { Search, Filter, Edit2, MessageCircle, Eye, Download, Calendar, Tag } fr
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { moroccanUsers } from '@/data/mockData';
 
 export const UsersSection = () => {
@@ -105,7 +106,7 @@ export const UsersSection = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous les statuts</SelectItem>
-              <SelectItem value="active">Actif (>10 messages)</SelectItem>
+              <SelectItem value="active">Actif (&gt;10 messages)</SelectItem>
               <SelectItem value="inactive">Inactif (≤10 messages)</SelectItem>
             </SelectContent>
           </Select>
@@ -125,105 +126,107 @@ export const UsersSection = () => {
         </div>
       </div>
 
-      {/* Users Table */}
+      {/* Users Table with Scroll Area for better zoom handling */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-              <tr>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Numéro WhatsApp</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Nom</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Tag</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Premier contact</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Dernier message</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Total messages</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Statut</th>
-                <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="p-4">
-                    <button 
-                      className="text-blue-600 hover:text-blue-800 font-mono text-base"
-                      onClick={() => console.log('Voir messages pour', user.phone)}
-                    >
-                      {user.phone}
-                    </button>
-                  </td>
-                  <td className="p-4">
-                    {editingUser === user.id ? (
+        <ScrollArea className="h-[600px] w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0">
+                <tr>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Numéro WhatsApp</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Nom</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Tag</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Premier contact</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Dernier message</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Total messages</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Statut</th>
+                  <th className="text-left p-4 font-semibold text-gray-900 dark:text-white">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="p-4">
+                      <button 
+                        className="text-blue-600 hover:text-blue-800 font-mono text-base"
+                        onClick={() => console.log('Voir messages pour', user.phone)}
+                      >
+                        {user.phone}
+                      </button>
+                    </td>
+                    <td className="p-4">
+                      {editingUser === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="h-8"
+                            placeholder="Entrer le nom"
+                          />
+                          <Button size="sm" onClick={handleSaveName}>Sauver</Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditingUser(null)}>Annuler</Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-900 dark:text-white text-base">
+                            {user.name || 'Nom non défini'}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleEditName(user.id, user.name)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <Select value={user.tag} onValueChange={(value) => handleTagChange(user.id, value)}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="client">Client</SelectItem>
+                          <SelectItem value="prospect">Prospect</SelectItem>
+                          <SelectItem value="test">Test</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="p-4 text-gray-600 dark:text-gray-400">
+                      {new Date(user.firstContact).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td className="p-4 text-gray-600 dark:text-gray-400">
+                      {new Date(user.lastMessage).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td className="p-4 text-gray-900 dark:text-white font-semibold">
+                      {user.totalMessages}
+                    </td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.totalMessages > 10 
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300'
+                          : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-300'
+                      }`}>
+                        {user.totalMessages > 10 ? 'Actif' : 'Inactif'}
+                      </span>
+                    </td>
+                    <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <Input
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          className="h-8"
-                          placeholder="Entrer le nom"
-                        />
-                        <Button size="sm" onClick={handleSaveName}>Sauver</Button>
-                        <Button size="sm" variant="outline" onClick={() => setEditingUser(null)}>Annuler</Button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-900 dark:text-white text-base">
-                          {user.name || 'Nom non défini'}
-                        </span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEditName(user.id, user.name)}
-                        >
-                          <Edit2 className="w-4 h-4" />
+                        <Button size="sm" variant="outline">
+                          <MessageCircle className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Eye className="w-4 h-4" />
                         </Button>
                       </div>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <Select value={user.tag} onValueChange={(value) => handleTagChange(user.id, value)}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="client">Client</SelectItem>
-                        <SelectItem value="prospect">Prospect</SelectItem>
-                        <SelectItem value="test">Test</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="p-4 text-gray-600 dark:text-gray-400">
-                    {new Date(user.firstContact).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="p-4 text-gray-600 dark:text-gray-400">
-                    {new Date(user.lastMessage).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="p-4 text-gray-900 dark:text-white font-semibold">
-                    {user.totalMessages}
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.totalMessages > 10 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300'
-                        : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-300'
-                    }`}>
-                      {user.totalMessages > 10 ? 'Actif' : 'Inactif'}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline">
-                        <MessageCircle className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </ScrollArea>
       </div>
 
       {/* Summary Stats */}
